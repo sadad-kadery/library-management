@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Library{% endblock %}</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    :root { --brand: #4f46e5; --brand-dark: #3730a3; --bg-soft: #f8f9fc; }
+    body { font-family: 'Inter', sans-serif; background-color: var(--bg-soft); }
+    .navbar-gradient { background: linear-gradient(135deg, var(--brand), var(--brand-dark)); }
+    .navbar-brand { font-weight: 700; }
+    .card {
+        border: none; border-radius: 0.75rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
+    .btn-primary { background: var(--brand); border-color: var(--brand); }
+    .btn-primary:hover { background: var(--brand-dark); border-color: var(--brand-dark); }
+    .code-chip {
+        cursor: pointer; font-family: monospace; background: #eef0fb;
+        border-radius: 0.4rem; padding: 0.15rem 0.6rem; display: inline-block;
+        transition: background 0.15s ease;
+    }
+    .code-chip:hover { background: #dfe2fa; }
+</style>
+{% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<nav class="navbar navbar-dark navbar-gradient mb-4 shadow-sm">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'home' %}"><i class="bi bi-book-half"></i> Library</a>
+        <div>
+            {% if user.is_authenticated %}
+                <span class="text-white-50 small me-2">{{ user.username }}</span>
+                <form method="post" action="{% url 'logout' %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-light">Log out</button>
+                </form>
+            {% else %}
+                <a href="{% url 'reception_login' %}" class="btn btn-sm btn-outline-light me-1">Reception</a>
+                <a href="{% url 'manager_login' %}" class="btn btn-sm btn-outline-light me-1">Manager</a>
+                <a href="/admin/login/" class="btn btn-sm btn-outline-light">Admin</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index:1080;">
+    {% for message in messages %}
+    <div class="toast align-items-center text-bg-{{ message.tags }} border-0" role="alert">
+        <div class="d-flex">
+            <div class="toast-body">{{ message }}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="container pb-5">
+    {% block content %}{% endblock %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Force a fresh response when the browser restores this page from bfcache.
+    window.addEventListener('pageshow', function (event) {
+        if (event.persisted) {
+            window.location.reload();
+        }
+    });
+</script>
+<script>
+    document.querySelectorAll('.toast').forEach(function (el) {
+        new bootstrap.Toast(el, { delay: 4000 }).show();
+    });
+</script>
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>

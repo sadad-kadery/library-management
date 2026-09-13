@@ -1,0 +1,61 @@
+{% extends 'circulation/base.html' %}
+{% block title %}Borrow an Item{% endblock %}
+{% block content %}
+
+<a href="{% url 'reception_dashboard' %}" class="btn btn-outline-secondary btn-sm mb-3">&larr; Back to Dashboard</a>
+<h1 class="h4 mb-3">Borrow an Item</h1>
+
+<div class="card p-4" style="max-width:480px;">
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">Library Code *</label>
+            <input type="text" id="library_code" name="library_code" class="form-control" required autofocus placeholder="e.g. BK001">
+            <div id="item-info" class="form-text"></div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Borrower Email *</label>
+            <input type="email" id="email" name="email" class="form-control" required placeholder="Auto-fills name/phone if known">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Borrower Name *</label>
+            <input type="text" id="name" name="name" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Phone (optional)</label>
+            <input type="text" id="phone" name="phone" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary">Borrow</button>
+    </form>
+</div>
+
+{% endblock %}
+{% block extra_scripts %}
+<script>
+document.getElementById('library_code').addEventListener('blur', function () {
+    const code = this.value.trim();
+    const infoBox = document.getElementById('item-info');
+    if (!code) return;
+    fetch(`{% url 'item_lookup' %}?code=${encodeURIComponent(code)}`)
+        .then(r => r.json())
+        .then(data => {
+            infoBox.innerHTML = data.found
+                ? `<span class="text-success">${data.name} — ${data.status_display}</span>`
+                : `<span class="text-danger">No item with that code</span>`;
+        });
+});
+
+document.getElementById('email').addEventListener('blur', function () {
+    const email = this.value.trim();
+    if (!email) return;
+    fetch(`{% url 'borrower_lookup' %}?email=${encodeURIComponent(email)}`)
+        .then(r => r.json())
+        .then(data => {
+            if (data.found) {
+                document.getElementById('name').value = data.name;
+                document.getElementById('phone').value = data.phone;
+            }
+        });
+});
+</script>
+{% endblock %}

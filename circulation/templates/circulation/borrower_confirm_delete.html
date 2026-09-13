@@ -1,0 +1,11 @@
+{% extends 'circulation/base.html' %}
+{% block title %}Delete Borrower{% endblock %}
+{% block content %}
+    <a href="{% url 'borrower_list' %}" class="btn btn-outline-secondary btn-sm mb-3">&larr; Back to Borrowers</a>
+    <h1 class="h4 mb-3">Delete {{ object.name }}?</h1>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Yes, delete</button>
+        <a href="{% url 'borrower_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+{% endblock %}

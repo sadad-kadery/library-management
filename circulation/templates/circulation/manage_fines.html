@@ -1,0 +1,29 @@
+{% extends 'circulation/base.html' %}
+{% block title %}Manage Fines{% endblock %}
+{% block content %}
+<a href="{% url 'reception_dashboard' %}" class="btn btn-outline-secondary btn-sm mb-3">&larr; Back to Dashboard</a>
+<h1 class="h4 mb-3">Unpaid Fines</h1>
+<div class="card">
+<table class="table table-striped mb-0">
+<thead><tr><th>Borrower</th><th>Item</th><th>Amount</th><th></th></tr></thead>
+<tbody>
+{% for fine in fines %}
+<tr>
+    <td>{{ fine.loan.borrower.name }}</td>
+    <td>{{ fine.loan.item.name }}</td>
+    <td>${{ fine.amount|floatformat:2 }}</td>
+    <td>
+        <form method="post" class="d-inline">
+            {% csrf_token %}
+            <input type="hidden" name="fine_id" value="{{ fine.id }}">
+            <button type="submit" class="btn btn-success btn-sm">Mark Paid</button>
+        </form>
+    </td>
+</tr>
+{% empty %}
+<tr><td colspan="4" class="text-muted">No unpaid fines right now.</td></tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+{% endblock %}

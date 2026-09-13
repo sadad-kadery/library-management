@@ -1,0 +1,53 @@
+{% extends 'circulation/base.html' %}
+{% block title %}Catalog{% endblock %}
+{% block content %}
+
+<h1 class="h4 mb-3">Library Catalog</h1>
+
+    <form method="get" class="mb-4">
+        <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Search by name...">
+    </form>
+
+    <div class="row g-3">
+        {% for item in items %}
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h5 class="card-title mb-1">{{ item.name }}</h5>
+                        {% if item.status == 'AVAILABLE' %}
+                            <span class="badge bg-success">Available</span>
+                        {% elif item.status == 'BORROWED' %}
+                            <span class="badge bg-warning text-dark">Borrowed</span>
+                        {% else %}
+                            <span class="badge bg-secondary">{{ item.get_status_display }}</span>
+                        {% endif %}
+                    </div>
+                    <p class="card-text text-muted small">{{ item.description }}</p>
+                    <span class="code-chip" onclick="copyCode(this)" data-code="{{ item.library_code }}" title="Click to copy">
+                        <i class="bi bi-clipboard"></i> {{ item.library_code }}
+                    </span>
+                    {% if item.status == 'BORROWED' and item.borrowed_by %}
+                    <div class="small text-muted mt-2"><i class="bi bi-person"></i> Borrowed by {{ item.borrowed_by }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>No items found.</p>
+        {% endfor %}
+    </div>
+
+{% endblock %}
+{% block extra_scripts %}
+<script>
+function copyCode(el) {
+    const code = el.getAttribute('data-code');
+    navigator.clipboard.writeText(code).then(function () {
+        const original = el.innerHTML;
+        el.innerHTML = '<i class="bi bi-check2"></i> Copied!';
+        setTimeout(() => { el.innerHTML = original; }, 1200);
+    });
+}
+</script>
+{% endblock %}

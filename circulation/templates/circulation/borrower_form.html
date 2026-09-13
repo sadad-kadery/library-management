@@ -1,0 +1,11 @@
+{% extends 'circulation/base.html' %}
+{% block title %}Borrower Details{% endblock %}
+{% block content %}
+    <a href="{% url 'borrower_list' %}" class="btn btn-outline-secondary btn-sm mb-3">&larr; Back to Borrowers</a>
+    <h1 class="h4 mb-3">Borrower Details</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+{% endblock %}

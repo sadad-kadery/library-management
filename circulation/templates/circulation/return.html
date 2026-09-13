@@ -1,0 +1,19 @@
+{% extends 'circulation/base.html' %}
+{% block title %}Return an Item{% endblock %}
+{% block content %}
+
+<a href="{% url 'reception_dashboard' %}" class="btn btn-outline-secondary btn-sm mb-3">&larr; Back to Dashboard</a>
+<h1 class="h4 mb-3">Return an Item</h1>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label class="form-label">Library Code *</label>
+            <input type="text" name="library_code" class="form-control" required autofocus placeholder="e.g. BK001">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Return</button>
+    </form>
+
+{% endblock %}

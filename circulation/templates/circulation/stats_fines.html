@@ -1,0 +1,56 @@
+{% extends 'circulation/base.html' %}
+{% block title %}Fine Stats{% endblock %}
+{% block content %}
+<a href="{% url 'manager_dashboard' %}" class="btn btn-outline-secondary btn-sm mb-3">&larr; Back to Dashboard</a>
+<h1 class="h4 mb-3">Fines by Status</h1>
+<div class="row g-4 mb-4">
+    <div class="col-12 col-md-5"><div class="card p-3"><canvas id="fineChart"></canvas></div></div>
+    <div class="col-12 col-md-7">
+        <h2 class="h6">Who Owes What</h2>
+        <div class="card">
+        <table class="table table-sm mb-0">
+            <thead><tr><th>Borrower</th><th>Total Owed</th></tr></thead>
+            <tbody>
+                {% for row in owed_by_borrower %}
+                <tr><td>{{ row.loan__borrower__name }}</td><td class="text-danger fw-bold">${{ row.total_owed|floatformat:2 }}</td></tr>
+                {% empty %}
+                <tr><td colspan="2" class="text-muted">Nobody currently owes a fine.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+    </div>
+</div>
+
+<h2 class="h5 mb-3">All Fines</h2>
+<div class="card">
+<table class="table table-striped mb-0">
+    <thead><tr><th>Borrower</th><th>Item</th><th>Amount</th><th>Status</th></tr></thead>
+    <tbody>
+        {% for fine in fines %}
+        <tr>
+            <td>{{ fine.loan.borrower.name }}</td>
+            <td>{{ fine.loan.item.name }}</td>
+            <td>${{ fine.amount|floatformat:2 }}</td>
+            <td>
+                {% if fine.status == 'UNPAID' %}<span class="badge bg-danger">Unpaid</span>
+                {% else %}<span class="badge bg-success">Paid</span>{% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4" class="text-muted">No fines recorded.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+new Chart(document.getElementById('fineChart'), {
+    type: 'bar',
+    data: { labels: {{ chart_labels|safe }}, datasets: [{ label: 'Total ($)', data: {{ chart_values|safe }}, backgroundColor: '#ef4444', borderRadius: 6 }] },
+    options: { indexAxis: 'y', plugins: { legend: { display: false } } }
+});
+</script>
+{% endblock %}

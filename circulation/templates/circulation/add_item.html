@@ -1,0 +1,56 @@
+{% extends 'circulation/base.html' %}
+{% block title %}Add New Item{% endblock %}
+{% block content %}
+<a href="{% url 'reception_dashboard' %}" class="btn btn-outline-secondary btn-sm mb-3">&larr; Back to Dashboard</a>
+<h1 class="h4 mb-3">Add New Item</h1>
+<div class="card p-4" style="max-width:520px;">
+<form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label class="form-label">Item Type *</label>
+        <select name="item_type" id="item_type" class="form-select" required>
+            <option value="">-- Select --</option>
+            <option value="BOOK">Book</option>
+            <option value="MUSIC">Music</option>
+            <option value="TOY">Toy</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Library Code *</label>
+        <input type="text" name="library_code" class="form-control" required placeholder="e.g. BK004">
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Name *</label>
+        <input type="text" name="name" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Description</label>
+        <textarea name="description" class="form-control"></textarea>
+    </div>
+
+    <div class="type-fields" id="fields-BOOK" style="display:none;">
+        <div class="mb-3"><label class="form-label">Author</label><input type="text" name="author" class="form-control"></div>
+        <div class="mb-3"><label class="form-label">Genre</label><input type="text" name="genre" class="form-control"></div>
+    </div>
+    <div class="type-fields" id="fields-MUSIC" style="display:none;">
+        <div class="mb-3"><label class="form-label">Artist</label><input type="text" name="artist" class="form-control"></div>
+        <div class="mb-3"><label class="form-label">Year</label><input type="number" name="year" class="form-control"></div>
+    </div>
+    <div class="type-fields" id="fields-TOY" style="display:none;">
+        <div class="mb-3"><label class="form-label">Type</label><input type="text" name="type" class="form-control"></div>
+        <div class="mb-3"><label class="form-label">Age</label><input type="text" name="age" class="form-control"></div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Add Item</button>
+</form>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script>
+document.getElementById('item_type').addEventListener('change', function () {
+    document.querySelectorAll('.type-fields').forEach(el => el.style.display = 'none');
+    const target = document.getElementById('fields-' + this.value);
+    if (target) target.style.display = 'block';
+});
+</script>
+{% endblock %}

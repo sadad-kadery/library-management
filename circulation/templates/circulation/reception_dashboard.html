@@ -1,0 +1,40 @@
+{% extends 'circulation/base.html' %}
+{% block title %}Reception Dashboard{% endblock %}
+{% block content %}
+
+    <h1 class="h4 mb-3">Reception Dashboard</h1>
+
+    <div class="row g-3">
+        <div class="col-12 col-md-4">
+            <div class="card h-100"><div class="card-body">
+                <h5 class="card-title">Borrow</h5>
+                <a href="{% url 'borrow_item' %}" class="btn btn-primary btn-sm">Borrow an Item</a>
+            </div></div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="card h-100"><div class="card-body">
+                <h5 class="card-title">Return</h5>
+                <a href="{% url 'return_item' %}" class="btn btn-primary btn-sm">Return an Item</a>
+            </div></div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="card h-100"><div class="card-body">
+                <h5 class="card-title">Borrowers</h5>
+                <a href="{% url 'borrower_list' %}" class="btn btn-primary btn-sm">Manage Borrowers</a>
+            </div></div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="card h-100"><div class="card-body">
+                <h5 class="card-title">Add New Item</h5>
+                <a href="{% url 'add_item' %}" class="btn btn-primary btn-sm">Add Item</a>
+            </div></div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="card h-100"><div class="card-body">
+                <h5 class="card-title">Clear Fines</h5>
+                <a href="{% url 'manage_fines' %}" class="btn btn-primary btn-sm">Manage Fines</a>
+            </div></div>
+        </div>
+    </div>
+
+{% endblock %}
