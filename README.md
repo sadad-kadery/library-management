@@ -16,6 +16,14 @@ Django + PostgreSQL library system with separate Admin, Reception, and Manager a
 
 **About the superuser account:** `maher` isn't a fourth role — it's an override account that bypasses the Admin/Reception/Manager checks, so one login can inspect the whole system. Real staff would only ever hold a Reception or Manager account, each restricted to its own section — `R2` and `M2` demonstrates that restricted experience.
 
+
+## How to Use
+
+- **Public search** — visit the site, no login needed. Search the catalog, see what's available/borrowed.
+- **Admin** — log in at `/admin/login/` with `maher`. Add/edit/delete Books, Music, Toys.
+- **Reception** — log in at `/reception/login/`. Borrow/return items by library code, manage borrowers, add new items, clear paid fines.
+- **Manager** — log in as `maher`, click **Manager Dashboard** in the navbar. View borrowing/item/fine stats, create Reception accounts.
+
 ## Features
 
 - **Admin** — CRUD on Books, Music, Toys (all inheriting a shared `Item` class with name, description, library code, status)
@@ -34,6 +42,16 @@ librarysystem/   # settings, root URLs
 catalog/         # Item, Book, Music, Toy models + admin CRUD
 circulation/     # Borrower, Loan, Fine models; views, templates, role logic
 ```
+
+## Requirements
+
+To run locally you'll need:
+
+- **Python 3.12+**
+- **PostgreSQL** (local database)
+- Python packages (installed via `requirements.txt`): Django, psycopg2-binary, gunicorn, whitenoise, dj-database-url
+
+Bootstrap 5 and Chart.js are loaded via CDN in the templates — no install needed for those.
 
 ## Run Locally
 
