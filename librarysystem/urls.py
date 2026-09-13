@@ -30,8 +30,12 @@ urlpatterns = [
 
     path('manager/stats/borrowing/', views.stats_borrowing, name='stats_borrowing'),
     path('manager/', views.manager_dashboard, name='manager_dashboard'),
+    path('manager/create-reception/', views.create_reception_account, name='create_reception_account'),
     path('manager/stats/items/', views.stats_items, name='stats_items'),
     path('manager/stats/fines/', views.stats_fines, name='stats_fines'),
+
+    path('account/password-change/', views.MyPasswordChangeView.as_view(), name='password_change'),
+    path('account/password-change/done/', views.MyPasswordChangeDoneView.as_view(), name='password_change_done'),
 
     path('search/', views.public_search, name='public_search'),
 ]

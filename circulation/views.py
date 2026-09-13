@@ -5,6 +5,8 @@ from datetime import timedelta
 
 from django.contrib import messages
 from django.contrib.auth import login as auth_login
+from django.contrib.auth.models import Group, User
+from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -16,7 +18,7 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, TemplateView
 
 from catalog.models import Item, Book, Music, Toy
 from .forms import BorrowForm, ReturnForm
@@ -220,6 +222,47 @@ def manage_fines(request):
 
 def is_manager(user):
     return user.is_superuser or user.groups.filter(name='Manager').exists()
+
+
+@never_cache
+@login_required(login_url='/manager/login/')
+@user_passes_test(is_manager, login_url='/manager/login/')
+def create_reception_account(request):
+    if request.method == 'POST':
+        username = request.POST.get('username', '').strip()
+        password = request.POST.get('password', '')
+        confirm_password = request.POST.get('confirm_password', '')
+
+        if not username or not password or not confirm_password:
+            messages.error(request, "All fields are required.")
+            return redirect('create_reception_account')
+
+        if password != confirm_password:
+            messages.error(request, "Passwords do not match.")
+            return redirect('create_reception_account')
+
+        if User.objects.filter(username=username).exists():
+            messages.error(request, f"Username '{username}' is already taken.")
+            return redirect('create_reception_account')
+
+        user = User.objects.create_user(username=username, password=password)
+        reception_group, _ = Group.objects.get_or_create(name='Reception')
+        user.groups.add(reception_group)
+        messages.success(request, f"Reception account '{username}' was created.")
+        return redirect('create_reception_account')
+
+    return render(request, 'circulation/create_reception_account.html')
+
+
+@method_decorator(never_cache, name='dispatch')
+class MyPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
+    template_name = 'circulation/password_change.html'
+    success_url = reverse_lazy('password_change_done')
+
+
+@method_decorator(never_cache, name='dispatch')
+class MyPasswordChangeDoneView(LoginRequiredMixin, TemplateView):
+    template_name = 'circulation/password_change_done.html'
 
 
 @never_cache
